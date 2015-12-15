@@ -2,3 +2,4 @@
 
 - Bug solved in "todo tags". Now it works when it is called from any directory
 - When a task is done, its finalization date and time is recorded.
+- In task reports, the appointments are omitted

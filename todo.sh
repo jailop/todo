@@ -1,13 +1,14 @@
 #!/bin/sh
 
 # Minimalist shell task manager
+# 2015, Jaime Lopez <jailop@gmail.com>
 
 FILE=$HOME/.todo
 TMP=/tmp/todo
 
 if [ -z $1 ]
 then
-	grep -nTve "^[x|\?] " $FILE
+    egrep -v '[0-9]{4}-[0-9]{2}-[0-9]{2}' $FILE | grep -nTve "^[x|\?] " 
 
 # Tags query
 # Search and sort keywords marked by an "@", these are tags
@@ -18,10 +19,11 @@ then
 elif [ $1 = "timed" ]
 then
 	grep -nTve "^x " $FILE | egrep '[0-9]{4}-[0-9]{2}-[0-9]{2}' | sort -k 2
-# elif [ $1 = "add" ] && [ ! -z $2 ];
+
 elif [ $1 = "add" ]
 then
 	echo "$2" >> $FILE
+
 elif [ $1 = "maybe" ]
 then
     if [ -z $2 ]
@@ -67,20 +69,24 @@ elif [ $1 = "top" ]
 then
 	if  [ -z $2 ]
 	then
-		grep -nTve "^[x|\?] " $FILE | head -n 5
+		egrep -v '[0-9]{4}-[0-9]{2}-[0-9]{2}' $FILE | grep -nTve "^[x|\?] " | head -n 5
 	else
-		grep -vTne "^[x|\?] " $FILE | grep -i $2 | head -n 5
+		egrep -v '[0-9]{4}-[0-9]{2}-[0-9]{2}' $FILE | grep -vTne "^[x|\?] " | grep -i $2 | head -n 5
 	fi
+
+# Help section
 elif [ $1 = "help" ]
 then
-	echo "todo - a minimalist task manager"
+	echo "todo.sh - a minimalist task manager"
 	echo "Usage:"
-	echo "  todo [top] [PATTERN]  : show tasks optionally matching a pattern"
-	echo "  todo add \"NEW_TASK\"   : add a new task to the list"
-	echo "  todo done NUMBER [TIME] : mark a task as done"
-	echo "  todo promote NUMBER   : the given task goes to the top"
-	echo "  todo compact          : delete definetively the tasks done"
+	echo "  todo.sh [top] [PATTERN]  : show tasks, optionally matching a pattern"
+    echo "  todo.sh timed            : show appointments (tasks that starts with YYYY-MM-DD)"
+	echo "  todo.sh add \"NEW_TASK\" : add a new task to the list"
+	echo "  todo.sh done NUMBER      : mark a task as done"
+	echo "  todo.sh promote NUMBER   : the given task goes to the top"
+	echo "  todo.sh compact          : delete definetively the tasks done"
+
 elif [ ! -z $1 ]
 then
-	grep -vTne "^[x|\?] " $FILE | grep -i $1
+    egrep -v '[0-9]{4}-[0-9]{2}-[0-9]{2}' $FILE | grep -vTne "^[x|\?] " $TMP | grep -i $1
 fi
