@@ -1,13 +1,20 @@
 #!/bin/sh
 
+# Minimalist shell task manager
+
 FILE=$HOME/.todo
+TMP=/tmp/todo
 
 if [ -z $1 ]
 then
 	grep -nTve "^[x|\?] " $FILE
+
+# Tags query
+# Search and sort keywords marked by an "@", these are tags
 elif [ $1 = "tags" ]
 then
-	grep -oe '@[A-Za-z0-9]*' .todo | sort -u
+	grep -oe '@[A-Za-z0-9]*' $FILE | sort -u
+
 elif [ $1 = "timed" ]
 then
 	grep -nTve "^x " $FILE | egrep '[0-9]{4}-[0-9]{2}-[0-9]{2}' | sort -k 2
@@ -28,16 +35,18 @@ elif [ $1 = "update" ]
 then
 	sed "$2 s/.*/$3/" < $FILE > $FILE~
 	cp $FILE~ $FILE
+
 elif [ $1 = "done" ]
 then
-	TODAY=$(date +%D)
+	TODAY=$(date)
 	if [ -z $3 ]
 	then
-		sed "$2 s/.*/x &/" < $FILE > $FILE~
+		sed "$2 s/.*/x & \[$TODAY\]/" < $FILE > $TMP
 	else
-		sed "$2 s/.*/x & ($3)/" < $FILE > $FILE~
+		sed "$2 s/.*/x & ($3) \[$TODAY\]/" < $FILE > $TMP
 	fi		
-	cp $FILE~ $FILE
+	cp $TMP $FILE
+
 elif [ $1 = "compact" ]
 then
 	grep -ve "^x " $FILE > $FILE~
