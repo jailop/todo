@@ -8,7 +8,7 @@ TMP=/tmp/todo
 
 if [ -z $1 ]
 then
-    egrep -v '[0-9]{4}-[0-9]{2}-[0-9]{2}' $FILE | grep -nTve "^[x|\?] " 
+    grep -nTve "^[x|\?] " $FILE | egrep -v '[0-9]{4}-[0-9]{2}-[0-9]{2}'
 
 # Tags query
 # Search and sort keywords marked by an "@", these are tags
@@ -69,9 +69,9 @@ elif [ $1 = "top" ]
 then
 	if  [ -z $2 ]
 	then
-		egrep -v '[0-9]{4}-[0-9]{2}-[0-9]{2}' $FILE | grep -nTve "^[x|\?] " | head -n 5
+		grep -nTve "^[x|\?] " $FILE | egrep -v '[0-9]{4}-[0-9]{2}-[0-9]{2}' |  head -n 5
 	else
-		egrep -v '[0-9]{4}-[0-9]{2}-[0-9]{2}' $FILE | grep -vTne "^[x|\?] " | grep -i $2 | head -n 5
+		grep -e "^[x|\?] " $FILE | egrep -nTv '[0-9]{4}-[0-9]{2}-[0-9]{2}' |  grep -i $2 | head -n 5
 	fi
 
 # Help section
@@ -88,5 +88,5 @@ then
 
 elif [ ! -z $1 ]
 then
-    egrep -v '[0-9]{4}-[0-9]{2}-[0-9]{2}' $FILE | grep -vTne "^[x|\?] " $TMP | grep -i $1
+    grep -nTve "^[x|\?] " $FILE | egrep -v '[0-9]{4}-[0-9]{2}-[0-9]{2}' | grep -i $1
 fi
